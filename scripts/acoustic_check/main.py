@@ -12,7 +12,7 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("程序被用户中断")
+        print("The program was interrupted by the user")
     except Exception as e:
-        print(f"程序执行出错: {e}")
+        print(f"Program execution error: {e}")
         sys.exit(1)
