@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-音频实时监听与绘图系统主程序
-基于Qt GUI + Matplotlib + UDP接收 + AFSK解码字符串
+Main program of audio real-time monitoring and drawing system
+Based on Qt GUI + Matplotlib + UDP receiving + AFSK decoding string
 """
 
 import sys
