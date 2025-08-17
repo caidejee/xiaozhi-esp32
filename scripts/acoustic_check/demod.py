@@ -1,5 +1,5 @@
 """
-实时AFSK解调器 - 基于Goertzel算法
+Real-time AFSK demodulator - based on the Goertzel algorithm
 """
 
 import numpy as np
@@ -7,54 +7,55 @@ from collections import deque
 
 
 class TraceGoertzel:
-    """实时Goertzel算法实现"""
+    """Real-time Goertzel algorithm implementation"""
     
     def __init__(self, freq: float, n: int):
         """
-        初始化Goertzel算法
+        Initialize the Goertzel algorithm
         
         Args:
-            freq: 归一化频率 (目标频率/采样频率)
-            n: 窗口大小
+            freq: Normalized frequency (Target frequency/sampling frequency)
+            n: window size
         """
         self.freq = freq
         self.n = n
         
-        # 预计算系数 - 与参考代码一致
+        # Precomputed coefficients - Consistent with the reference code
         self.k = int(freq * n)
         self.w = 2.0 * np.pi * freq
         self.cw = np.cos(self.w)
         self.sw = np.sin(self.w)
         self.c = 2.0 * self.cw
         
-        # 初始化状态变量 - 使用deque存储最近两个值
+        # Initialize state variables - use deque to store the last two values
         self.zs = deque([0.0, 0.0], maxlen=2)
     
     def reset(self):
-        """重置算法状态"""
+        """Reset algorithm state"""
         self.zs.clear()
         self.zs.extend([0.0, 0.0])
     
     def __call__(self, xs):
         """
-        处理一组采样点 - 与参考代码一致的接口
+        Processing a set of sample points - Interface consistent with reference code
         
         Args:
-            xs: 采样点序列
+            xs: Sampling point sequence
             
         Returns:
-            计算出的振幅
+            Calculated amplitude
+
         """
         self.reset()
         for x in xs:
             z1, z2 = self.zs[-1], self.zs[-2]  # Z[-1], Z[-2]
             z0 = x + self.c * z1 - z2  # S[n] = x[n] + C * S[n-1] - S[n-2]
-            self.zs.append(float(z0))  # 更新序列
+            self.zs.append(float(z0))  # update sequence
         return self.amp
     
     @property
     def amp(self) -> float:
-        """计算当前振幅 - 与参考代码一致"""
+        """Calculate the current amplitude - consistent with the reference code"""
         z1, z2 = self.zs[-1], self.zs[-2]
         ip = self.cw * z1 - z2
         qp = self.sw * z1
